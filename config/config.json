@@ -1,0 +1,99 @@
+{
+  "cloud_connection": {
+    "cloud_url": "localhost:1883",
+    "channel_id": "",
+    "thing_id": "",
+    "thing_key": ""
+  },
+  "fast_frame": [
+    {
+      "can_iface": "vcan0",
+      "msgid": 819,
+      "cyclic": true,
+      "interval": 1000000,
+      "delay_start": 0,
+      "messages": [
+        {
+          "slave_id": 1,
+          "param_addr": 4115,
+          "operation": 1,
+          "param_val": 1000
+        },
+        {
+          "slave_id": 2,
+          "param_addr": 4115,
+          "operation": 1,
+          "param_val": 1000
+        }
+      ]
+    },
+    {
+      "can_iface": "vcan1",
+      "msgid": 819,
+      "cyclic": true,
+      "interval": 1000000,
+      "delay_start": 0,
+      "messages": [
+        {
+          "slave_id": 1,
+          "param_addr": 4115,
+          "operation": 1,
+          "param_val": 1000
+        },
+        {
+          "slave_id": 2,
+          "param_addr": 4115,
+          "operation": 1,
+          "param_val": 1000
+        }
+      ]
+    }
+  ],
+  "provision": [
+    {
+      "can_iface": "vcan0",
+      "msgid": 819,
+      "cyclic": false,
+      "interval": 10,
+      "delay_start": 0,
+      "messages": [
+        {
+          "slave_id": 1,
+          "param_addr": 101,
+          "operation": 1,
+          "param_val": 12
+        },
+        {
+          "slave_id": 1,
+          "param_addr": 103,
+          "operation": 1,
+          "param_val": 12
+        },
+        {
+          "slave_id": 1,
+          "param_addr": 102,
+          "operation": 1,
+          "param_val": 12
+        },
+        {
+          "slave_id": 2,
+          "param_addr": 101,
+          "operation": 1,
+          "param_val": 12
+        },
+        {
+          "slave_id": 2,
+          "param_addr": 102,
+          "operation": 1,
+          "param_val": 12
+        },
+        {
+          "slave_id": 2,
+          "param_addr": 103,
+          "operation": 1,
+          "param_val": 12
+        }
+      ]
+    }
+  ]
+}
