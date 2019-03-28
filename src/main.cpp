@@ -55,6 +55,9 @@ int main(int argc, char *argv[])
 	connOpts.set_automatic_reconnect(true);
 	connOpts.set_user_name(thing_id);
 	connOpts.set_password(thing_key);
+	mqtt::ssl_options sslopts;
+	sslopts.set_trust_store("/vosion/build/amd64/ca.crt");
+	connOpts.set_ssl(sslopts);
 	const string topic = "channels/" + channel_id + "/messages";
 
 	mqtt::topic top(cli, topic, QOS, true);
