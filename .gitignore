@@ -2,7 +2,7 @@
 build
 .dockerfile*
 .image*
-
+.vscode
 # Object files
 *.o
 *.ko
