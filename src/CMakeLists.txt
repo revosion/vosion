@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(vosion)
 add_definitions(-std=c++11)
-
 ###############################################################
 # Version info
 ###############################################################
@@ -29,9 +28,17 @@ endforeach()
 # Create libraries
 ###############################################################
 set(SOURCES
+    ./iio_utils.c
+    ./adc.cpp
+    ./sender.cpp
     ./main.cpp
 )
 
+set(TEST
+    ./test.cpp
+    ./vfd.cpp
+    ./sender.cpp
+)
 #-------------
 # Build static library
 #-------------
@@ -51,10 +58,17 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 include_directories(
     ${PROJECT_SOURCE_DIR}
-    ${PROJECT_SOURCE_DIR}/include
+    ../include
     /usr/local/include/mqtt
 )
 target_link_libraries(${PROJECT_NAME} ${json11} ${paho-mqtt3a} ${paho-mqttpp3})
+
+add_executable(testv ${TEST})
+include_directories(
+    ${PROJECT_SOURCE_DIR}
+    ../include
+)
+target_link_libraries(testv -lpthread ${json11})
 
 ###############################################################
 # Submodules

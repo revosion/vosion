@@ -51,6 +51,16 @@
       ]
     }
   ],
+  "control": {
+    "can_iface": "vcan0",
+    "msgid": 819,
+    "message": {
+      "slave_id": 1,
+      "param_addr": 101,
+      "operation": 1,
+      "param_val": 12
+    }
+  },
   "provision": [
     {
       "can_iface": "vcan0",

@@ -7,6 +7,64 @@
     "max_buffered_msgs": 120,
     "persist_dir": "datapersist"
   },
+  "vfds": {
+    "devices": [
+      {
+        "name": "pump_1",
+        "can_iface": "vcan0",
+        "slave_id": 1
+      },
+      {
+        "name": "pump_2",
+        "can_iface": "vcan0",
+        "slave_id": 2
+      },
+      {
+        "name": "pump_3",
+        "can_iface": "vcan1",
+        "slave_id": 3
+      },
+      {
+        "name": "pump_4",
+        "can_iface": "vcan1",
+        "slave_id": 4
+      }
+    ],
+    "commands": {
+      "start": {
+        "param_addr": 4096,
+        "operation": 2,
+        "param_val": 65023
+      },
+      "stop": {
+        "param_addr": 4096,
+        "operation": 2,
+        "param_val": 65535
+      },
+      "set_power": {
+        "param_addr": 300,
+        "operation": 2,
+        "param_val": null
+      },
+      "set_frequency": {
+        "param_addr": 4097,
+        "operation": 2,
+        "param_val": null
+      }
+    }
+  },
+  "analog_sensors": [
+    {
+      "name": "pressure_1",
+      "adc_dev": 0,
+      "channel": 1
+    },
+    {
+      "name": "pressure_2",
+      "adc_dev": 0,
+      "channel": 2
+    }
+  ],
   "fast_frame": [
     {
       "can_iface": "vcan0",
@@ -51,6 +109,16 @@
       ]
     }
   ],
+  "control": {
+    "can_iface": "vcan0",
+    "msgid": 819,
+    "message": {
+      "slave_id": 1,
+      "param_addr": 101,
+      "operation": 1,
+      "param_val": 12
+    }
+  },
   "provision": [
     {
       "can_iface": "vcan0",

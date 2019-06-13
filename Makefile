@@ -21,7 +21,7 @@ NAME := vosion
 REGISTRY ?=
 
 # Which architecture to build - see $(ALL_ARCH) for options.
-ARCH ?= amd64
+ARCH ?= armhf
 
 # This version-strategy uses git tags to set the version string
 VERSION ?= 0.1.0
