@@ -51,20 +51,26 @@
         "operation": 2,
         "param_val": null
       }
+    },
+    "pid_params": {
+      "kp": 1,
+      "ki": 1,
+      "kd": 1,
+      "dt": 0.2,
+      "max": 100,
+      "min": 50
     }
   },
-  "analog_sensors": [
-    {
-      "name": "pressure_1",
-      "adc_dev": 0,
-      "channel": 1
+  "analog_sensors": {
+    "pressure": {
+      "device_num": 0,
+      "channel_num": 1
     },
-    {
-      "name": "pressure_2",
-      "adc_dev": 0,
-      "channel": 2
+    "flow": {
+      "device_num": 1,
+      "channel_num": 2
     }
-  ],
+  },
   "fast_frame": [
     {
       "can_iface": "vcan0",

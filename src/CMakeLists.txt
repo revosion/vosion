@@ -28,16 +28,13 @@ endforeach()
 # Create libraries
 ###############################################################
 set(SOURCES
-    ./iio_utils.c
-    ./adc.cpp
-    ./sender.cpp
-    ./main.cpp
-)
-
-set(TEST
-    ./test.cpp
+    ./vosion.cpp
     ./vfd.cpp
     ./sender.cpp
+    ./adc.cpp
+    ./iio_utils.c
+    ./pid.cpp
+    ./adc.cpp
 )
 #-------------
 # Build static library
@@ -62,13 +59,6 @@ include_directories(
     /usr/local/include/mqtt
 )
 target_link_libraries(${PROJECT_NAME} ${json11} ${paho-mqtt3a} ${paho-mqttpp3})
-
-add_executable(testv ${TEST})
-include_directories(
-    ${PROJECT_SOURCE_DIR}
-    ../include
-)
-target_link_libraries(testv -lpthread ${json11})
 
 ###############################################################
 # Submodules
