@@ -62,6 +62,9 @@
     }
   },
   "analog_sensors": {
+    "sample_number": 100,
+    "sample_interal": 10,
+    "read_interval": 1000,
     "pressure": {
       "device_num": 0,
       "channel_num": 1

@@ -11,18 +11,36 @@
 #include "vfd.h"
 #include "adc.h"
 #include "pid.h"
+#include "shared_queue.h"
+#include <cstdarg>
 
 using namespace json11;
 using namespace vosion;
 using namespace std;
-
-const auto PERIOD = chrono::milliseconds(200);
 
 static sig_atomic_t sigval;
 static void onsig(int val)
 {
     sigval = (sig_atomic_t)val;
     cout << "Interrupt signal (" << val << ") received.\n";
+}
+
+std::string format(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+#ifndef _MSC_VER
+    size_t size = std::snprintf(nullptr, 0, format, args) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf(new char[size]);
+    std::vsnprintf(buf.get(), size, format, args);
+    return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+#else
+    int size = _vscprintf(format, args);
+    std::string result(++size, 0);
+    vsnprintf_s((char *)result.data(), size, _TRUNCATE, format, args);
+    return result;
+#endif
+    va_end(args);
 }
 
 int main()
@@ -33,37 +51,37 @@ int main()
     string err;
     const auto config = Json::parse(str, err);
 
+    shared_queue<string> queue;
+    queue.push("test");
+
     // VFD Device setup
     map<string, VarFreqDrive> vfds;
     for (auto &item : config["vfds"]["devices"].array_items())
     {
         VarFreqDrive vfd(item, config["vfds"]["commands"]);
-        vfd.start();
-        vfd.stop();
-        vfd.set_frequency(222);
+        //vfd.start();
+        //vfd.stop();
+        //vfd.set_frequency(222);
         const string name = item["name"].string_value();
         vfds[name] = vfd;
     }
 
     // ADC setup
-    vector<ADC> adcs;
+    const int sample_number = config["analog_sensors"]["sample_number"].int_value();
+    const int sample_interval = config["analog_sensors"]["sample_interal"].int_value();
+    const auto read_interval = chrono::milliseconds(config["analog_sensors"]["read_interval"].int_value());
+    vector<ADC> analog_sensors;
     ADC adc0;
     ADC adc1;
-    adcs.push_back(adc0);
-    adcs.push_back(adc1);
+    adc0.set_device_num(0);
+    adc1.set_device_num(1);
+    analog_sensors.push_back(adc0);
+    analog_sensors.push_back(adc1);
+   
     int sensor_dev_num = config["analog_sensors"]["pressure"]["device_num"].int_value();
     int sensor_chan_num = config["analog_sensors"]["pressure"]["channel_num"].int_value();
     float values[8];
-
-    string sensor_dev_num_arg = "-N " + sensor_dev_num;
-    std::vector<string> args = {"test", sensor_dev_num_arg, "-g", "-a", "-l 1", "-c 1"};
-    // build the pointers array
-    std::vector<char *>argv;
-    for (std::string &s : args) {
-        argv.push_back(&s[0]);
-    }
-    argv.push_back(NULL);
-    adcs.at(sensor_dev_num).init(argv.size() - 1, argv.data());
+    analog_sensors.at(sensor_dev_num).init();
 
     // PID controller setup
     const double dt = config["vfds"]["pid_params"]["dt"].number_value();
@@ -85,18 +103,32 @@ int main()
     }
 
     // The time at which to reads the next sample, starting now
+    //ofstream data_file;
+    //data_file.open("data.csv", ios::out | ios::app);
+
     auto tm = chrono::steady_clock::now();
     while (0 == sigval)
     {
         // Pace the samples to the desired rate
         this_thread::sleep_until(tm);
-        adcs.at(sensor_dev_num).read_adc(values);
+        analog_sensors.at(sensor_dev_num).read_adc(values);
+        
+        cout << "all readings for adc " << sensor_dev_num << " is ";
+        for (int i = 0; i < 8; i++)
+            cout << values[i] << ", ";
+        cout << endl;
+        cout << "pressure reading is " << values[sensor_chan_num] << endl;
+        // data_file << "number of points collected: " << sample_number << "\n";
+        // for (int i = 0; i < 1; i++)
+        // {
+        //     auto rs = format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", sensor_values[0][i * 8], sensor_values[0][i * 8 + 1], sensor_values[0][i * 8 + 2], sensor_values[0][i * 8 + 3], sensor_values[0][i * 8 + 4], sensor_values[0][i * 8 + 5], sensor_values[0][i * 8 + 6], sensor_values[0][i * 8 + 7], sensor_values[1][i * 8], sensor_values[1][i * 8 + 1], sensor_values[1][i * 8 + 2], sensor_values[1][i * 8 + 3], sensor_values[1][i * 8 + 4], sensor_values[1][i * 8 + 5], sensor_values[1][i * 8 + 6], sensor_values[1][i * 8 + 7]);
+        //     data_file << rs << "\n";
+        // }
 
-        cout << values[sensor_chan_num] << endl;
-
-        tm += PERIOD;
-        //tm += chrono::milliseconds(long(dt*1000));
+        tm += read_interval;
     }
     cout << "exit..." << endl;
-    adcs.at(sensor_dev_num).cleanup();
+    //data_file.close();
+    analog_sensors.at(sensor_dev_num).cleanup();
+    //analog_sensors.at(1).cleanup();
 }

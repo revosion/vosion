@@ -416,7 +416,7 @@ static const struct option longopts[] = {
     {},
 };
 
-int ADC::init(int argc, char **argv)
+int ADC::init()
 {
     /*     long long num_loops = 2;
     unsigned long timedelay = 1000000;
@@ -445,81 +445,81 @@ int ADC::init(int argc, char **argv)
 
     //register_cleanup();
 
-    while ((c = getopt_long(argc, argv, "aAc:egl:n:N:t:T:w:?", longopts,
-                            NULL)) != -1)
-    {
-        printf("option is %d", c);
-        switch (c)
-        {
-        case 'a':
-            autochannels = AUTOCHANNELS_ENABLED;
-            break;
-        case 'A':
-            autochannels = AUTOCHANNELS_ENABLED;
-            force_autochannels = true;
-            break;
-        case 'c':
-            errno = 0;
-            num_loops = strtoll(optarg, &dummy, 10);
-            if (errno)
-            {
-                ret = -errno;
-                cleanup();
-            }
+    // while ((c = getopt_long(argc, argv, "aAc:egl:n:N:t:T:w:?", longopts,
+    //                         NULL)) != -1)
+    // {
+    //     printf("option is %d", c);
+    //     switch (c)
+    //     {
+    //     case 'a':
+    //         autochannels = AUTOCHANNELS_ENABLED;
+    //         break;
+    //     case 'A':
+    //         autochannels = AUTOCHANNELS_ENABLED;
+    //         force_autochannels = true;
+    //         break;
+    //     case 'c':
+    //         errno = 0;
+    //         num_loops = strtoll(optarg, &dummy, 10);
+    //         if (errno)
+    //         {
+    //             ret = -errno;
+    //             cleanup();
+    //         }
 
-            break;
-        case 'e':
-            noevents = 1;
-            break;
-        case 'g':
-            notrigger = 1;
-            break;
-        case 'l':
-            errno = 0;
-            buf_len = strtoul(optarg, &dummy, 10);
-            if (errno)
-            {
-                ret = -errno;
-                cleanup();
-            }
+    //         break;
+    //     case 'e':
+    //         noevents = 1;
+    //         break;
+    //     case 'g':
+    //         notrigger = 1;
+    //         break;
+    //     case 'l':
+    //         errno = 0;
+    //         buf_len = strtoul(optarg, &dummy, 10);
+    //         if (errno)
+    //         {
+    //             ret = -errno;
+    //             cleanup();
+    //         }
 
-            break;
-        case 'n':
-            device_name = strdup(optarg);
-            break;
-        case 'N':
-            errno = 0;
-            dev_num = strtoul(optarg, &dummy, 10);
-            if (errno)
-            {
-                ret = -errno;
-                cleanup();
-            }
-            break;
-        case 't':
-            trigger_name = strdup(optarg);
-            break;
-        case 'T':
-            errno = 0;
-            trig_num = strtoul(optarg, &dummy, 10);
-            if (errno)
-                return -errno;
-            break;
-        case 'w':
-            errno = 0;
-            timedelay = strtoul(optarg, &dummy, 10);
-            if (errno)
-            {
-                ret = -errno;
-                cleanup();
-            }
-            break;
-        case '?':
-            print_usage();
-            ret = -1;
-            cleanup();
-        }
-    }
+    //         break;
+    //     case 'n':
+    //         device_name = strdup(optarg);
+    //         break;
+    //     case 'N':
+    //         errno = 0;
+    //         dev_num = strtoul(optarg, &dummy, 10);
+    //         if (errno)
+    //         {
+    //             ret = -errno;
+    //             cleanup();
+    //         }
+    //         break;
+    //     case 't':
+    //         trigger_name = strdup(optarg);
+    //         break;
+    //     case 'T':
+    //         errno = 0;
+    //         trig_num = strtoul(optarg, &dummy, 10);
+    //         if (errno)
+    //             return -errno;
+    //         break;
+    //     case 'w':
+    //         errno = 0;
+    //         timedelay = strtoul(optarg, &dummy, 10);
+    //         if (errno)
+    //         {
+    //             ret = -errno;
+    //             cleanup();
+    //         }
+    //         break;
+    //     case '?':
+    //         print_usage();
+    //         ret = -1;
+    //         cleanup();
+    //     }
+    // }
 
     /* Find the device requested */
     if (dev_num < 0 && !device_name)
@@ -660,7 +660,7 @@ int ADC::init(int argc, char **argv)
     {
         fprintf(stderr, "Enabling all channels\n");
 
-        ret = enable_disable_one_channel(dev_dir_name, 1, 3);
+        ret = enable_disable_all_channels(dev_dir_name, 1);
         if (ret)
         {
             fprintf(stderr, "Failed to enable all channels\n");
@@ -822,6 +822,14 @@ void ADC::read_adc(float *values)
             }
         }
     }
+}
+
+void ADC::set_device_num(int dev_num) {
+    this->dev_num = dev_num;
+    this->notrigger = 1;
+    this->buf_len = 1;
+    autochannels = AUTOCHANNELS_ENABLED;
+    this->num_loops = 1;
 }
 
 float ADC::read2byte(uint16_t input, struct iio_channel_info *info)

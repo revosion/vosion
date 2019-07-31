@@ -8,12 +8,13 @@ class ADC
 {
 public:
     ADC(){};
-    int init(int argc, char **argv);
+    int init();
     void print_usage(void);
     void cleanup(void);
     void sig_handler(int signum);
     //void register_cleanup(void);
     void read_adc(float *values);
+    void set_device_num(int dev_num);
 
 private:
     int size_from_channelarray(struct iio_channel_info *channels, int num_channels);
