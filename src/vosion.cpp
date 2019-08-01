@@ -103,10 +103,12 @@ int main()
     }
 
     // The time at which to reads the next sample, starting now
-    //ofstream data_file;
-    //data_file.open("data.csv", ios::out | ios::app);
+    ofstream data_file;
+    data_file.open("data.csv", ios::out | ios::app);
 
     auto tm = chrono::steady_clock::now();
+    data_file << "start collecting data" << endl;
+
     while (0 == sigval)
     {
         // Pace the samples to the desired rate
@@ -118,12 +120,8 @@ int main()
             cout << values[i] << ", ";
         cout << endl;
         cout << "pressure reading is " << values[sensor_chan_num] << endl;
-        // data_file << "number of points collected: " << sample_number << "\n";
-        // for (int i = 0; i < 1; i++)
-        // {
-        //     auto rs = format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", sensor_values[0][i * 8], sensor_values[0][i * 8 + 1], sensor_values[0][i * 8 + 2], sensor_values[0][i * 8 + 3], sensor_values[0][i * 8 + 4], sensor_values[0][i * 8 + 5], sensor_values[0][i * 8 + 6], sensor_values[0][i * 8 + 7], sensor_values[1][i * 8], sensor_values[1][i * 8 + 1], sensor_values[1][i * 8 + 2], sensor_values[1][i * 8 + 3], sensor_values[1][i * 8 + 4], sensor_values[1][i * 8 + 5], sensor_values[1][i * 8 + 6], sensor_values[1][i * 8 + 7]);
-        //     data_file << rs << "\n";
-        // }
+        auto rs = format("%f,%f,%f,%f,%f,%f,%f,%f", values[0],values[1],values[2],values[3],values[4],values[5],values[6],values[7]);
+        data_file << rs << endl;
 
         tm += read_interval;
     }
