@@ -58,16 +58,20 @@ int main()
 
     // VFD Device setup
     map<string, VarFreqDrive> vfds;
+
+    VarFreqDrive *vfd;
+
     for (auto &item : config["vfds"]["devices"].array_items())
     {
-        VarFreqDrive vfd(item, config["vfds"]["commands"]);
+        vfd = new VarFreqDrive(item, config["vfds"]["commands"]);
         // vfd.start();
         // vfd.stop();
         // vfd.set_frequency(5000);
-        const string name = item["name"].string_value();
-        vfds[name] = vfd;
+        // const string name = item["name"].string_value();
+        // vfds[name] = vfd;
+        break;
     }
-    vfd.start();  // only pump1 enabled for testing
+    vfd->start();  // only pump1 enabled for testing
 
 
     // ADC setup
@@ -131,7 +135,7 @@ int main()
         double pressureOut = values[0];
         double freqRef = pid.calculate(pressureRef, pressureOut);
         cout << "Pump1 Freq is " << freqRef << endl;
-        vfd.set_frequency(int(freqRef));
+        vfd->set_frequency(int(freqRef));
 
         tm += read_interval;
     }
@@ -139,5 +143,5 @@ int main()
     data_file.close();
     analog_sensors.at(sensor_dev_num).cleanup();
     //analog_sensors.at(1).cleanup();
-    vfd.stop();
+    vfd->stop();
 }
