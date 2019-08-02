@@ -46,7 +46,7 @@ void VarFreqDrive::stop()
     send_command("stop");
 };
 
-void VarFreqDrive::set_frequency(const int t_frequency)
+void VarFreqDrive::set_frequency(int t_frequency)
 {
     send_command("set_frequency", t_frequency);
 };

@@ -53,12 +53,13 @@
       }
     },
     "pid_params": {
-      "kp": 1,
-      "ki": 1,
-      "kd": 1,
-      "dt": 0.2,
-      "max": 100,
-      "min": 50
+      "kp": 0.1,
+      "ki": 0.1,
+      "kd": 0.0,
+      "dt": 1.0,
+      "max": 49.0,
+      "min": 25.0,
+      "ref": 0.5
     }
   },
   "analog_sensors": {
@@ -66,12 +67,12 @@
     "sample_interal": 10,
     "read_interval": 1000,
     "pressure": {
-      "device_num": 0,
-      "channel_num": 1
+      "device_num": 1,
+      "channel_num": 0
     },
     "flow": {
       "device_num": 1,
-      "channel_num": 2
+      "channel_num": 1
     }
   },
   "fast_frame": [

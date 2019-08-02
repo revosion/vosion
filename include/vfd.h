@@ -13,7 +13,8 @@ public:
     VarFreqDrive(){};
     void start();
     void stop();
-    void set_frequency(const int t_frequency);
+    //    void set_frequency(const int t_frequency);
+    void set_frequency( int t_frequency);
 
 private:
     json11::Json m_device_config;

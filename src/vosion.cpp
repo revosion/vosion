@@ -59,9 +59,9 @@ int main()
     for (auto &item : config["vfds"]["devices"].array_items())
     {
         VarFreqDrive vfd(item, config["vfds"]["commands"]);
-        //vfd.start();
-        //vfd.stop();
-        //vfd.set_frequency(222);
+        vfd.start();
+        vfd.stop();
+        vfd.set_frequency(5000);
         const string name = item["name"].string_value();
         vfds[name] = vfd;
     }
@@ -73,7 +73,7 @@ int main()
     vector<ADC> analog_sensors;
     ADC adc0;
     ADC adc1;
-    adc0.set_device_num(0);
+    adc1.set_device_num(0);
     adc1.set_device_num(1);
     analog_sensors.push_back(adc0);
     analog_sensors.push_back(adc1);
@@ -90,6 +90,7 @@ int main()
     const double kp = config["vfds"]["pid_params"]["kp"].number_value();
     const double kd = config["vfds"]["pid_params"]["kd"].number_value();
     const double ki = config["vfds"]["pid_params"]["ki"].number_value();
+    const double pressureRef = config["vfds"]["pid_params"]["ref"].number_value();   
     PID pid = PID(dt, max, min, kp, kd, ki);
 
     sigval = 0;
@@ -122,6 +123,10 @@ int main()
         cout << "pressure reading is " << values[sensor_chan_num] << endl;
         auto rs = format("%f,%f,%f,%f,%f,%f,%f,%f", values[0],values[1],values[2],values[3],values[4],values[5],values[6],values[7]);
         data_file << rs << endl;
+
+        double pressureOut = values[0];
+        double freqRef = pid.calculate(pressureRef, pressureOut);
+        cout << "Pump1 Freq is " << freqRef << endl;
 
         tm += read_interval;
     }

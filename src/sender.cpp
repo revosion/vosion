@@ -7,9 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-
 #include <fcntl.h>
-
 #include <linux/can.h>
 #include <linux/can/bcm.h>
 #include "sender.h"
