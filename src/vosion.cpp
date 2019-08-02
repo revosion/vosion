@@ -45,6 +45,8 @@ std::string format(const char *format, ...)
 
 int main()
 {
+    cout << "Version is 1.001"  << endl;
+    
     // Read config file
     ifstream t("config.json");
     string str((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
@@ -59,12 +61,14 @@ int main()
     for (auto &item : config["vfds"]["devices"].array_items())
     {
         VarFreqDrive vfd(item, config["vfds"]["commands"]);
-        vfd.start();
-        vfd.stop();
-        vfd.set_frequency(5000);
+        // vfd.start();
+        // vfd.stop();
+        // vfd.set_frequency(5000);
         const string name = item["name"].string_value();
         vfds[name] = vfd;
     }
+    vfd.start();  // only pump1 enabled for testing
+
 
     // ADC setup
     const int sample_number = config["analog_sensors"]["sample_number"].int_value();
@@ -127,11 +131,13 @@ int main()
         double pressureOut = values[0];
         double freqRef = pid.calculate(pressureRef, pressureOut);
         cout << "Pump1 Freq is " << freqRef << endl;
+        vfd.set_frequency(int(freqRef));
 
         tm += read_interval;
     }
     cout << "exit..." << endl;
-    //data_file.close();
+    data_file.close();
     analog_sensors.at(sensor_dev_num).cleanup();
     //analog_sensors.at(1).cleanup();
+    vfd.stop();
 }
