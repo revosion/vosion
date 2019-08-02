@@ -131,11 +131,13 @@ int main()
         cout << "pressure reading is " << values[sensor_chan_num] << endl;
         auto rs = format("%f,%f,%f,%f,%f,%f,%f,%f", values[0],values[1],values[2],values[3],values[4],values[5],values[6],values[7]);
         data_file << rs << endl;
+        
+        cout << "flow reading is " << values[1] << endl;
 
         double pressureOut = values[0];
         double freqRef = pid.calculate(pressureRef, pressureOut);
         cout << "Pump1 Freq is " << freqRef << endl;
-        vfd->set_frequency(int(freqRef));
+        vfd->set_frequency((int)freqRef);
 
         tm += read_interval;
     }
