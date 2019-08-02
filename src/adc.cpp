@@ -822,13 +822,13 @@ void ADC::read_adc(float *values)
                 switch(k)
                 {
                     case 0:
-                        values[k] = adc_val*1.6/max_adc_val;
+                        values[k] = adc_val * 1.6 / max_adc_val;
                         break;
                     case 1:
-                        values[k] = adc_val*50.0/max_adc_val;
+                        values[k] = adc_val * 141.35 / max_adc_val;
                         break;
                     default:
-                        values[k] = adc_val * 141.35 / max_adc_val;
+                        values[k] = adc_val * v_ref / max_adc_val;
                         break;
                  }
             }
