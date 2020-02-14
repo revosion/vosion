@@ -67,7 +67,7 @@ int main()
         // vfd.start();
         // vfd.stop();
         // vfd.set_frequency(5000);
-        // const string name = item["name"].string_value();
+        const string name = item["name"].string_value();
         // vfds[name] = vfd;
         break;
     }

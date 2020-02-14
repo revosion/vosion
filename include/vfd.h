@@ -1,28 +1,28 @@
 #ifndef VOSION_VFD_H_
 #define VOSION_VFD_H_
 
-#include <json11.hpp>
-#include "sender.h"
+#include <json.hpp>
+#include "socketcan_sender.h"
+#include "socketcan_raw_receiver.h"
 
-namespace vosion
-{
-class VarFreqDrive
-{
-public:
-    VarFreqDrive(const json11::Json &t_device_config, const json11::Json &t_command_config); //, const Sender &t_can_sender);
-    VarFreqDrive(){};
-    void start();
-    void stop();
-    //    void set_frequency(const int t_frequency);
-    void set_frequency( int t_frequency);
+class VarFreqDrive {
+ public:
+  VarFreqDrive(const nlohmann::json &config);
+  VarFreqDrive(void) {
+  }
+  ;
+  virtual ~VarFreqDrive(void);
+  void Cleanup(void);
 
-private:
-    json11::Json m_device_config;
-    json11::Json m_command_config;
-    Sender m_can_sender;
-    void send_command(const std::string t_command, const int t_value);
-    void send_command(const std::string t_command);
-    int m_msgid{819};
+ private:
+  nlohmann::json config_;
+  std::map<std::string, SocketCANSender*> can_senders_;
+  void SendCommand(const std::string vfd_name, const std::string command,
+                    const int value);
+  void SendCommand(const std::string vfd_name, const std::string command);
+  void ScheduledSendThreadFunction(void);
+  const int msgid_ = 819;
+  std::thread scheduledSendThread_;
+  bool is_running_ = true;
 };
-} // namespace vosion
 #endif // VOSION_VFD_H_

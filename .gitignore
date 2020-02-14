@@ -1,3 +1,5 @@
+.project
+
 # Targets
 build
 .dockerfile*

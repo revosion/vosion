@@ -7,23 +7,22 @@
 #include <linux/can.h>
 #include <linux/can/bcm.h>
 
-class Receiver
-{
-public:
-  Receiver(char *iface, int msgid);
+class SocketCANBCMReceiver {
+ public:
+  SocketCANBCMReceiver(const char *iface);
   int Init();
   int Read();
 
-private:
+ private:
   int socket_;
-  char *iface_;
+  const char *iface_;
   int msgid_;
   struct sockaddr_can addr_;
   struct ifreq ifr_;
-  struct CanMsg
-  {
+  struct CanMsg {
     struct bcm_msg_head msg_head;
     struct can_frame frame[1];
-  }msg_;
+  } msg_;
+  void ProcessFrame(const struct can_frame *const frame);
 };
 #endif // RECEIVER_H_

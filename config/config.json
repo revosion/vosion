@@ -1,35 +1,34 @@
 {
   "cloud_connection": {
     "cloud_url": "tcp://localhost:1883",
-    "channel_id": "822e9a0e-7c1a-422b-9936-9c021187fae2",
+    "data_channel_id": "822e9a0e-7c1a-422b-9936-9c021187fae2",
+    "control_channel_id": "822e9a0e-7c1a-422b-9936-9c021187fae2",
     "thing_id": "ca442347-8724-4470-bd09-34527bd35274",
     "thing_key": "4698f0f8-df67-478d-a8da-a4c5c2f52dfe",
     "max_buffered_msgs": 120,
-    "persist_dir": "datapersist"
+    "persist_dir": "datapersist",
+    "QoS": 1,
+    "period_seconds": 60
   },
   "vfds": {
-    "devices": [
-      {
-        "name": "pump_1",
+    "devices": {
+      "pump_1": {
         "can_iface": "can0",
         "slave_id": 1
       },
-      {
-        "name": "pump_2",
+      "pump_2": {
         "can_iface": "can0",
         "slave_id": 2
       },
-      {
-        "name": "pump_3",
+      "pump_3": {
         "can_iface": "can1",
         "slave_id": 3
       },
-      {
-        "name": "pump_4",
+      "pump_4": {
         "can_iface": "can1",
         "slave_id": 4
       }
-    ],
+    },
     "commands": {
       "start": {
         "param_addr": 4096,
@@ -41,6 +40,21 @@
         "operation": 2,
         "param_val": 65535
       },
+      "reverse": {
+        "param_addr": 4096,
+        "operation": 2,
+        "param_val": 65279
+      },
+      "reset": {
+        "param_addr": 4096,
+        "operation": 2,
+        "param_val": 64511
+      },
+      "e_stop": {
+        "param_addr": 4096,
+        "operation": 2,
+        "param_val": 63487
+      },
       "set_power": {
         "param_addr": 300,
         "operation": 2,
@@ -50,6 +64,137 @@
         "param_addr": 4097,
         "operation": 2,
         "param_val": null
+      },
+      "get_fast_frame": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": null
+      },
+      "get_target_frequency": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8192,
+        "description": "当前给定Hz值的100倍"
+      },
+      "get_output_frequency": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8193,
+        "description": "输出频率Hz值的100倍"
+      },
+      "get_output_voltage": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8194,
+        "description": "输出电压有效值伏特10倍数"
+      },
+      "get_bus_voltage": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8195,
+        "description": "母线电压伏特10倍数"
+      },
+      "get_output_current": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8196,
+        "description": "输出电流有效值安培10倍数"
+      },
+      "get_speed_percent": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8197,
+        "description": "电机速度百分数(1000对应100%)"
+      },
+      "get_speed_rpm": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8198,
+        "description": "电机转速(rpm)"
+      },
+      "get_prompt": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8206,
+        "description": "提示符代码"
+      },
+      "get_q14": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8207,
+        "description": "过程控制反馈标幺值(q14)"
+      },
+      "get_sys_state": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8208,
+        "description": "本机系统状态(SYS_STATE)"
+      },
+      "get_ct_state": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8209,
+        "description": "硬件端子当前状态应射(CT_STATE)"
+      },
+      "get_output_power": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8271,
+        "description": "变频输出功率(Kw)"
+      },
+      "get_U_current": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8275,
+        "description": "U相输出电流(10倍安培数)"
+      },
+      "get_V_current": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8276,
+        "description": "V相输出电流(10倍安培数)"
+      },
+      "get_W_current": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8277,
+        "description": "W相输出电流(10倍安培数)"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8278,
+        "description": "电能表高位(Mwh)"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8279,
+        "description": "电能表低位(10倍Kwh)"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8280,
+        "description": "输出功率因数(cosΦ的100倍)"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8281,
+        "description": "电机转矩百分数(1000对应100%)"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8282,
+        "description": "散热器“1”点温度10倍数"
+      },
+      "": {
+        "param_addr": 4115,
+        "operation": 1,
+        "param_val": 8283,
+        "description": "散热器“2”点温度10倍数"
       }
     },
     "pid_params": {
@@ -68,11 +213,13 @@
     "read_interval": 1000,
     "pressure": {
       "device_num": 1,
-      "channel_num": 0
+      "channel_num": 0,
+      "enabled": true
     },
     "flow": {
       "device_num": 1,
-      "channel_num": 1
+      "channel_num": 1,
+      "enabled": true
     }
   },
   "fast_frame": [

@@ -11,23 +11,23 @@ RUN apt-get -y update && apt-get install --no-install-recommends -y \
 RUN cd /tmp \
     && git clone https://github.com/eclipse/paho.mqtt.c.git \
     && cd paho.mqtt.c \
-    && git checkout v1.2.1 \
+    && git checkout v1.3.1 \
     #&& cmake -Bbuild -H. -DPAHO_WITH_SSL=ON -DPAHO_BUILD_STATIC=true \
     && mkdir build \
     && cd build \
-    && cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_STATIC=TRUE -DPAHO_BUILD_SAMPLES=FALSE .. \
+    && cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_STATIC=FALSE -DPAHO_BUILD_SAMPLES=FALSE -DPAHO_BUILD_DOCUMENTATION=FALSE .. \
     && make \
     && make install \
     && ldconfig \
     && cd /tmp \
     && git clone https://github.com/eclipse/paho.mqtt.cpp \
     && cd paho.mqtt.cpp \
-    #&& cmake -DPAHO_BUILD_STATIC=true -DCMAKE_PREFIX_PATH=../../paho.mqtt.c .. \
     && mkdir build \
     && cd build \
-    && cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_STATIC=TRUE ..\
+    && cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_STATIC=FALSE -DPAHO_BUILD_SAMPLES=FALSE -DPAHO_BUILD_DOCUMENTATION=FALSE -DPAHO_BUILD_SHARED=TRUE ..\
     && make \
     && make install \
+    && ldconfig \
     && cd /tmp \
     && git clone https://github.com/dropbox/json11.git \
     && cd json11 \

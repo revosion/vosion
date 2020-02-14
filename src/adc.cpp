@@ -384,13 +384,6 @@ void ADC::cleanup(void)
     free(dev_dir_name);
 }
 
-void ADC::sig_handler(int signum)
-{
-    fprintf(stderr, "Caught signal %d\n", signum);
-    cleanup();
-    exit(-signum);
-}
-
 /* void ADC::register_cleanup(void)
 {
     struct sigaction sa = {.sa_handler = this->sig_handler};
@@ -818,19 +811,7 @@ void ADC::read_adc(float *values)
             for (int k = 0; k < num_channels; k++)
             {
                 float adc_val = read2byte(*(uint16_t *)((data + scan_size * i) + channels[k].location), &channels[k]);
-                //values[k] = adc_val * v_ref / max_adc_val;
-                switch(k)
-                {
-                    case 0:
-                        values[k] = adc_val * 1.6 / max_adc_val;
-                        break;
-                    case 1:
-                        values[k] = adc_val * 141.35 / max_adc_val;
-                        break;
-                    default:
-                        values[k] = adc_val * v_ref / max_adc_val;
-                        break;
-                 }
+                values[k] = adc_val * v_ref / max_adc_val;
             }
         }
     }

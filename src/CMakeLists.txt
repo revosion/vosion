@@ -28,13 +28,16 @@ endforeach()
 # Create libraries
 ###############################################################
 set(SOURCES
-    ./vosion.cpp
+    ./main.cpp
     ./vfd.cpp
-    ./sender.cpp
+    ./socketcan_sender.cpp
     ./adc.cpp
     ./iio_utils.c
     ./pid.cpp
     ./adc.cpp
+    ./sensor.cpp
+    ./cloud_adapter.cpp
+    ./socketcan_raw_receiver.cpp
 )
 #-------------
 # Build static library
@@ -58,7 +61,7 @@ include_directories(
     ../include
     /usr/local/include/mqtt
 )
-target_link_libraries(${PROJECT_NAME} ${json11} ${paho-mqtt3a} ${paho-mqttpp3})
+target_link_libraries(${PROJECT_NAME} ${json11} ${paho-mqtt3a} ${paho-mqttpp3} pthread)
 
 ###############################################################
 # Submodules

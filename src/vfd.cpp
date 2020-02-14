@@ -1,54 +1,67 @@
-#include <json11.hpp>
-#include "vfd.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
+
+#include "vfd.h"
 
 using namespace std;
-using namespace json11;
+using namespace nlohmann;
 
-namespace vosion
-{
-VarFreqDrive::VarFreqDrive(const Json &t_device_config, const Json &t_command_config)
-    : m_device_config(t_device_config), m_command_config(t_command_config)
-{
-    char *can_iface = (char *)m_device_config["can_iface"].string_value().c_str();
-    m_can_sender = Sender(can_iface);
-};
+VarFreqDrive::VarFreqDrive(const json &config)
+    :
+    config_(config) {
+  for (auto &item : config_.at("devices").items()) {
+    const char *can_iface = item.value().at("can_iface").get<string>().c_str();
 
-void VarFreqDrive::send_command(const std::string t_command)
-{
-    Json::object msg;
-    msg["param_addr"] = m_command_config[t_command]["param_addr"];
-    msg["param_val"] = m_command_config[t_command]["param_val"];
-    msg["operation"] = m_command_config[t_command]["operation"];
-    msg["slave_id"] = m_device_config["slave_id"];
-    m_can_sender.Send(m_msgid, msg);
-    cout << Json(msg).dump() << endl;
-};
+    can_senders_[item.key()] = new SocketCANSender(can_iface);
+    ;
+  }
+  scheduledSendThread_ = thread(&VarFreqDrive::ScheduledSendThreadFunction,
+                                this);
+}
 
-void VarFreqDrive::send_command(const std::string t_command, const int t_value)
-{
-    Json::object msg;
-    msg["param_addr"] = m_command_config[t_command]["param_addr"];
-    msg["param_val"] = to_string(t_value);
-    msg["operation"] = m_command_config[t_command]["operation"];
-    msg["slave_id"] = m_device_config["slave_id"];
-    m_can_sender.Send(m_msgid, msg);
-    cout << Json(msg).dump() << endl;
-};
+VarFreqDrive::~VarFreqDrive(void) {
+}
 
-void VarFreqDrive::start()
-{
-    send_command("start");
-};
+void VarFreqDrive::SendCommand(const std::string vfd_name,
+                               const std::string command) {
+  json msg = config_.at("commands").at(command);
+  msg["slave_id"] =
+      config_.at("devices").at(vfd_name).at("slave_id").get<int>();
+  can_senders_[vfd_name]->Send(msgid_, msg);
+  cout << msg.dump() << endl;
+}
 
-void VarFreqDrive::stop()
-{
-    send_command("stop");
-};
+void VarFreqDrive::SendCommand(const std::string vfd_name,
+                               const std::string command, const int value) {
+  json msg = config_.at("commands").at(command);
+  msg["slave_id"] =
+      config_.at("devices").at(vfd_name).at("slave_id").get<int>();
+  msg["param_val"] = value;
+  can_senders_[vfd_name]->Send(msgid_, msg);
+  cout << msg.dump() << endl;
+}
 
-void VarFreqDrive::set_frequency(int t_frequency)
-{
-    send_command("set_frequency", t_frequency);
-};
+void VarFreqDrive::ScheduledSendThreadFunction(void) {
+  auto tm = chrono::steady_clock::now();
+  string uiface = "can0";
+  const char *can_iface = uiface.c_str();
+  SocketCANRawReceiver receiver(can_iface);
+  while (is_running_) {
+    tm += chrono::milliseconds(500);
+    this_thread::sleep_until(tm);
+    for (auto &item : config_.at("devices").items()) {
+      SendCommand(item.key(), "start");
+      SendCommand(item.key(), "set_frequency", 10);  //TODO get frequency from pid controller
+    }
+    receiver.Read();
+  }
+}
 
-} // namespace vosion
+void VarFreqDrive::Cleanup(void) {
+  is_running_ = false;
+  scheduledSendThread_.join();
+  for (auto const& sender : can_senders_) {
+    delete sender.second;
+  }
+}

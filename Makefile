@@ -98,13 +98,12 @@ build-shell: .image-$(BUILD_IMAGE)
 	    -it                                                                \
 	    --rm                                                               \
 	    --cap-add SYS_PTRACE                                               \
-			--network="host" \
-			$(DOCKER_USER)                                                     \
+		--network="host" 													\
 	    $(DOCKER_RUN_OPTS)                                                 \
-			-v $$(pwd):/$(NAME)/                                               \
-			-w /$(NAME)/build/$(ARCH)                                          \
+		-v $$(pwd):/$(NAME)/                                               \
+		-w /$(NAME)/build/$(ARCH)                                          \
 	    -e NAME=$(NAME)                                                    \
-			-e VERSION=$(VERSION)                                              \
+		-e VERSION=$(VERSION)                                              \
 	    $(BUILD_IMAGE)                                                     \
 	    /bin/bash
 
